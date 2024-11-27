@@ -5,21 +5,29 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SocketService extends WebSocketServer {
 
+    // Set zum Verfolgen der offenen WebSocket-Verbindungen
+    private Set<WebSocket> activeConnections;
+
     public SocketService(int port) {
         super(new InetSocketAddress(port));
+        activeConnections = new HashSet<>(); // Initialisiere das Set
     }
 
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
         System.out.println("Neue Verbindung geöffnet: " + webSocket.getRemoteSocketAddress());
+        activeConnections.add(webSocket); // Füge die WebSocket-Verbindung zur aktiven Liste hinzu
     }
 
     @Override
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
         System.out.println("Verbindung geschlossen: " + webSocket.getRemoteSocketAddress());
+        activeConnections.remove(webSocket); // Entferne die WebSocket-Verbindung aus der aktiven Liste
     }
 
     @Override
